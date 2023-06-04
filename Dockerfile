@@ -5,9 +5,9 @@ FROM centos
 RUN yum update -y 
 
 # Set environment variables
-ENV JAVA_HOME /opt/jdk8
-ENV PATH $PATH:$JAVA_HOME/bin
-ENV CATALINA_HOME /opt/tomcat
+ENV JAVAHOME /opt/jdk8
+ENV PATH $PATH:$JAVAHOME/bin
+ENV TOMCATHOME /opt/tomcat
 
 # Install JDK 8 
 # Change dir to /opt
@@ -28,4 +28,4 @@ RUN chmod u+x /opt/apache-tomcat-9.0.44/bin/*.sh
 EXPOSE 8080
 
 # Start Tomcat on container startup
-CMD $CATALINA_HOME/bin/catalina.sh run
+CMD $TOMCATHOME/bin/catalina.sh run
