@@ -12,7 +12,7 @@
       register: latest_jdk_version
 
     - name: Get current JDK version from base image
-      command: docker run --rm <base_image> java -version 2>&1 | awk -F '"' '/version/ {print $2}'
+      command: docker run --rm grpraveenkumar/jdk-tomcat-ansible java -version 2>&1 | awk -F '"' '/version/ {print $2}'
       register: current_jdk_version
 
     - name: Compare JDK versions
@@ -22,25 +22,25 @@
     - name: Recreate base image with latest JDK
       block:
         - name: Build base image
-          command: docker build -t <base_image> .
+          command: docker build -t grpraveenkumar/jdk-tomcat-ansible .
           args:
             chdir: /path/to/dockerfile
 
         - name: Stop and remove existing container
-          command: docker stop <container_name> && docker rm <container_name>
+          command: docker stop jdktomcatcontainer && docker rm jdktomcatcontainer
           ignore_errors: true
 
         - name: Start container with updated image
-          command: docker run -d --name <container_name> -p 8080:8080 <base_image>
+          command: docker run -d --name jdktomcatcontainer -p 8080:8080 grpraveenkumar/jdk-tomcat-ansible
       when: is_jdk_update_required
 
     - name: Send email notification
       mail:
         host: smtp.example.com
         port: 587
-        username: your_email@example.com
-        password: your_password
-        to: admin@example.com
+        username: letter2praveenkumar.com
+        password: password
+        to: admin@praveenfosys.com
         subject: JDK upgrade on Tomcat image
         body: JDK has been upgraded to the latest version.
       when: is_jdk_update_required
