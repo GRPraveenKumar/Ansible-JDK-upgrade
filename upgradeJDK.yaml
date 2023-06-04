@@ -1,0 +1,45 @@
+---
+- name: Upgrade JDK on Tomcat image
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Check latest JDK version
+      uri:
+        url: "https://api.oracle.com/java-se/updater/8/latest_version"
+        return_content: yes
+      register: latest_jdk_version
+
+    - name: Get current JDK version from base image
+      command: docker run --rm <base_image> java -version 2>&1 | awk -F '"' '/version/ {print $2}'
+      register: current_jdk_version
+
+    - name: Compare JDK versions
+      set_fact:
+        is_jdk_update_required: "{{ latest_jdk_version.content != current_jdk_version.stdout }}"
+
+    - name: Recreate base image with latest JDK
+      block:
+        - name: Build base image
+          command: docker build -t <base_image> .
+          args:
+            chdir: /path/to/dockerfile
+
+        - name: Stop and remove existing container
+          command: docker stop <container_name> && docker rm <container_name>
+          ignore_errors: true
+
+        - name: Start container with updated image
+          command: docker run -d --name <container_name> -p 8080:8080 <base_image>
+      when: is_jdk_update_required
+
+    - name: Send email notification
+      mail:
+        host: smtp.example.com
+        port: 587
+        username: your_email@example.com
+        password: your_password
+        to: admin@example.com
+        subject: JDK upgrade on Tomcat image
+        body: JDK has been upgraded to the latest version.
+      when: is_jdk_update_required
