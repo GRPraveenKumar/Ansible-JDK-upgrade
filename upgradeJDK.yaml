@@ -38,9 +38,9 @@
       mail:
         host: smtp.example.com
         port: 587
-        username: letter2praveenkumar.com
+        username: praveenfosys
         password: password
-        to: admin@praveenfosys.com
+        to: letter2praveenkumar@gmail.com
         subject: JDK upgrade on Tomcat image
         body: JDK has been upgraded to the latest version.
       when: is_jdk_update_required
